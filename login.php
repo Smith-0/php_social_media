@@ -28,20 +28,20 @@
 
     // tabs active logic
 
-    if (isset($_POST['login_submit'])) {
-      $login_tab = 'active';
-      $login_tab_area = 'true';
-      $login_tab_area_show = 'show active';
-      $register_tab = '';
-      $register_tab_area = 'false';
-      $register_tab_area_show = '';
-    } else {
+    if (isset($_POST['register_submit'])) {
       $login_tab = '';
       $login_tab_area = 'false';
       $login_tab_area_show = '    ';
       $register_tab = 'active';
       $register_tab_area = 'true';
       $register_tab_area_show = 'show active';
+    } else {
+      $login_tab = 'active';
+      $login_tab_area = 'true';
+      $login_tab_area_show = 'show active';
+      $register_tab = '';
+      $register_tab_area = 'false';
+      $register_tab_area_show = '';
     }
 
     include './assets/database/db.php';
@@ -78,7 +78,7 @@
             // remember_me checked or not
             if(isset($_POST['remember_me'])) {
               $hour = time() + 3600 * 24 * 30; // 30 days
-              setcookie('username', $email, $hour);
+              setcookie('email', $email, $hour);
               setcookie('password', $password, $hour);
             }
 
@@ -128,7 +128,7 @@
             // remember_me checked or not
             if(isset($_POST['remember_me'])) {
               $hour = time() + 3600 * 24 * 30; // 30 days
-              setcookie('username', $email, $hour);
+              setcookie('email', $email, $hour);
               setcookie('password', $password, $hour);
             }
 

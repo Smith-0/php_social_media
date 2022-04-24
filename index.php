@@ -1,5 +1,4 @@
 <?php
-
 include './assets/database/db.php';
 
 session_start();
@@ -59,7 +58,7 @@ if (isset($_SESSION['id'])) {
     <title>Memories</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="py-2 navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <img class="logo" src="assets/images/logo.png" alt="Memories">
         <a class="navbar-brand" href="#">Memories</a>
@@ -73,25 +72,24 @@ if (isset($_SESSION['id'])) {
             </li>
             
           </ul>
-          <br>
 
           <?php
             if (!$login) {
-              echo '<div class="float-end">
-                        <a href="./login.php" class="btn btn-primary" type="submit">LogIn</a>
-                        <button class="btn btn-primary mx-2" type="submit">Register</button>
+              echo '<div class="d-grid gap-2">
+                      <a href="./login.php" class="login_register_btn btn btn-primary mx-lg-3 btn-block" type="submit">LogIn / Register</a>
                     </div>';
             } else {
-              echo '<div class="dropdown float-end mx-3">
-                      <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img class="profile_pic" src="'.$user_profile_pic.'" alt="Profile Photo" /> &nbsp; '.$user_name.'
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person-circle"></i> &nbsp; Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-file-post"></i> &nbsp; Posts</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark-fill"></i> &nbsp; Saved</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> &nbsp; Logout</a></li>
-                      </ul>
+              echo '
+                    <div class="dropdown mx-lg-3 profile_dropdown">
+                        <button class="btn py-2 btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                          <img class="profile_pic" src="'.$user_profile_pic.'" alt="Profile Photo" /> &nbsp; '.$user_name.'
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                          <li><a class="dropdown-item" href="#"><i class="bi bi-person-circle"></i> &nbsp; Profile</a></li>
+                          <li><a class="dropdown-item" href="#"><i class="bi bi-file-post"></i> &nbsp; Posts</a></li>
+                          <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark-fill"></i> &nbsp; Saved</a></li>
+                          <li><a class="dropdown-item" href="./logout.php"><i class="bi bi-box-arrow-right"></i> &nbsp; Logout</a></li>
+                        </ul>
                     </div>';
             }
           ?>

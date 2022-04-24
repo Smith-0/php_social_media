@@ -12,3 +12,14 @@ nav {
     width : 30px;
     border-radius : 50%;
 }
+
+@media (max-width: 991.98px) {
+    .profile_dropdown , .login_register_btn{
+        margin-bottom : 10px;
+    }
+
+    .navbar-nav {
+        margin-top : 20px;
+    }
+
+}
