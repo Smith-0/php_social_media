@@ -1,0 +1,25 @@
+.main_container {
+    padding: 50px;
+    width: 70%;
+    margin-top: 23vh;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login_tab {
+    border-right: 0.1px solid #000;
+    padding-right: 15px;
+}
+
+.register_tab {
+    padding-left: 15px;
+}
+
+
+@media (max-width: 575.98px) {
+    .main_container {
+        padding: 25px;
+        width: 90%;
+    }
+
+}
