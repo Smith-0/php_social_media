@@ -12,6 +12,6 @@
         setcookie('email', '', time() - 3600, './index.php'); // empty value and old timestamp
     }
 
-    header('location: ./index.php');
+    header('location: ./login.php');
 
 ?>

@@ -1,3 +1,20 @@
+<?php
+session_start();
+if (isset($_SESSION['email'])) {
+  header('Location: ./index.php');
+}
+
+// get cookies value
+if (isset($_COOKIE['email']) || isset($_COOKIE['password'])) {
+  $cookie_email = $_COOKIE['email'];
+  $cookie_password = $_COOKIE['password'];
+} else {
+  $cookie_email = '';
+  $cookie_password = '';
+}
+
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -137,7 +154,7 @@
           }
           
         } else {
-          echo '<script>swal("Not Match!", "Password and confirm password must be same!", "warning");</script>';
+          echo '<script>swal("Invalid!", "Invalid credentials!", "warning");</script>';
         }
 
       } else {
@@ -168,11 +185,11 @@
             <div class="tab-pane fade <?php echo $login_tab_area_show; ?>" id="pills-login" role="tabpanel" aria-labelledby="pills-login-tab">
               <form method="post" action="">
                 <div class="form-floating mb-3">
-                  <input type="email" class="form-control" name="email" placeholder="name@example.com">
+                  <input type="email" class="form-control" value="<?php echo $cookie_email; ?>" name="email" placeholder="name@example.com">
                   <label for="email">Email address</label>
                 </div>
                 <div class="form-floating mb-3">
-                  <input type="password" class="form-control" name="password" placeholder="password">
+                  <input type="password" class="form-control" value="<?php echo $cookie_password; ?>" name="password" placeholder="password">
                   <label for="password">Password</label>
                 </div>
                 <div class="mb-3 form-check">
