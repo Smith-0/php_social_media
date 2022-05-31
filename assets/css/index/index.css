@@ -4,6 +4,10 @@ i {
   cursor: pointer;
 }
 
+.remove_all_styles {
+  all: revert;
+}
+
 /* NAVBAR CSS */
 .logo {
   height: 40px;
@@ -12,21 +16,18 @@ i {
 .profile_pic_navbar {
   -o-object-fit: cover;
      object-fit: cover;
-  width: 31px;
-  height: 31px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid black;
   padding: 1px;
-}
-
-.profile_dropdown {
-  padding-top: 0.15rem !important;
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (max-width: 992px) {
   .profile_pic_navbar {
     width: 26px;
+    height: 26px;
   }
 }
 
@@ -80,6 +81,13 @@ i {
   font-family: 'Hind', sans-serif;
   line-height: 1.3 !important;
   text-align: justify;
+}
+
+.comment {
+  font-size: 13.5px;
+  font-family: 'Hind', sans-serif;
+  line-height: 1.3 !important;
+  word-wrap: break-word;
 }
 
 .caption_more, .time {
@@ -230,11 +238,25 @@ a:hover {
   .all_comments_caption_container {
     height: 590px;
   }
+  .card {
+    border-left: 0 !important;
+    border-right: 0 !important;
+  }
+  .post_image {
+    height: 500px;
+  }
 }
 
 @media (max-width: 380px) {
   .all_comments_caption_container {
     height: 550px;
+  }
+  .card {
+    border-left: 0 !important;
+    border-right: 0 !important;
+  }
+  .post_image {
+    height: 450px;
   }
 }
 
@@ -263,7 +285,15 @@ a:hover {
 .profile_pic_post_comment {
   width: 32px;
   height: 32px;
-  border-radius: 25%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.show_people_image {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 /*# sourceMappingURL=index.css.map */

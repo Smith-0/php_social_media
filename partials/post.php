@@ -1,7 +1,25 @@
 <?php
 
-  $sql = "SELECT * FROM `posts` ORDER BY created_at DESC";
-  $result = mysqli_query($conn, $sql);
+  if(isset($_GET['user_id'])) {
+    $user_id = $_GET['user_id'];
+    $sql = "SELECT * FROM `posts` where `user_id` = '$user_id' ORDER BY created_at DESC";
+    $result = mysqli_query($conn, $sql);
+    
+  } else if (isset($_GET['saved_posts'])){
+    // $sql = "SELECT * FROM `posts` where `user_id` = '$user_id' ORDER BY created_at DESC";
+    $current_user_id = $_SESSION['id'];
+    $current_user_info = mysqli_fetch_array(mysqli_query($conn , "SELECT * FROM `users` where id = $current_user_id"));
+    $saved_posts = unserialize($current_user_info['saved_posts']);
+    $id_list = implode(',', array_map('intval', $saved_posts));
+    $sql = "SELECT * FROM `posts` WHERE `id` IN ($id_list)";
+    
+    $result = mysqli_query($conn, $sql);
+  } else {
+    $sql = "SELECT * FROM `posts` ORDER BY created_at DESC";
+    $result = mysqli_query($conn, $sql);
+  }
+
+  
 
 ?>
 
@@ -11,7 +29,17 @@
         time_span.innerHTML = moment(time).startOf("second").fromNow();
         time_span.title = moment(time).format('MMMM Do YYYY, h:mm:ss a');
       }
+
+      function detect_links (text) {
+        text = text.replace(
+            /((http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)/g,
+            '<a class="remove_all_styles" target="_blank" href="$1">$1</a>'
+        );
+        document.write(text);
+      }
     </script>
+
+  
 
 
 
@@ -76,6 +104,37 @@
             $is_saved = 'true';
           }
 
+          
+          echo'<div class="modal fade" id="show_who_like'.$post_info["id"].'" tabindex="-1" aria-labelledby="show_who_like'.$post_info["id"].'_label" aria-hidden="true" >
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="show_who_like'.$post_info["id"].'_label">likes</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body m-4">
+                            <div class="row">';
+
+                                    foreach ($likes as $person_user_id) {
+
+                                        $person_info = mysqli_fetch_array(mysqli_query($conn , "SELECT * FROM users WHERE id = '$person_user_id'"));
+
+                                        echo '    
+                                            <div class="col-12 pt-3">
+                                                <img class="show_people_image" src="'.$person_info['profile_pic'].'" alt="">
+                                                <a href="./profile.php?user_id='.$person_user_id.'"><h6 class="px-2 pt-2 d-inline">'.$person_info['display_name'].'</h6>  </a> 
+                                            </div>
+                                            ';
+                                          }
+
+                                
+                            echo'   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+
 
           // comments info
           $comments_result  = mysqli_query($conn, "SELECT * FROM `comments` WHERE `post_id` = '$post_id' ORDER BY created_at DESC");
@@ -95,13 +154,13 @@
 
           echo'
 
-          <div class="col-lg-8">
+          <div class="col-lg-8 mx-auto">
             <div class="card mb-5">
                   <div class="border-bottom py-2 px-3 d-flex justify-content-between">
                     <div class="profile_pic_display_name">
                       <img class="profile_pic_post shadow-sm" src="'.$post_user_profile_pic.'" alt="Profile Photo" />
                       <div class="location_display_name_container d-inline">
-                      &nbsp; &nbsp; <a href="./user_profile" class="display_name_header">'.$display_name.'</a>
+                      &nbsp; &nbsp; <a href="./profile.php?user_id='.$post_info['user_id'].'" class="display_name_header">'.$display_name.'</a>
                             <span class="location">';
                               if($post_info['location'] !== '' ){ echo $post_info['location'] ;};
                       echo  '</span>
@@ -139,18 +198,33 @@
                         </h4>
                       </div>
                     </div>
-                    <span class="like_count d-block mt-2" id="likeText_'.$post_id.'">'.$like_text.'</span>
-                    <a href="./user_profile" class="display_name">'.$display_name.'</a> 
+                    <span class="like_count d-block mt-2"' ; if($like_count!=0) {echo ' data-bs-toggle="modal" data-bs-target="#show_who_like'.$post_info["id"].'" style="cursor: pointer"'; } echo' id="likeText_'.$post_id.'">'.$like_text.'</span>
+                    <a href="./profile.php?user_id='.$post_info['user_id'].'" class="display_name">'.$display_name.'</a> 
                           ';
                             if(strlen($post_info['caption'] < 150 )) {
                               echo '<span class="caption">'.$post_info['caption'].'</span>';
                             } else {
                               echo '<span class="caption">'.substr($post_info['caption'] , 0 , 150).'</span>
-                              <span class="caption caption_more text-muted">...more</span>';
+                              <span class="caption caption_more text-muted" data-bs-toggle="modal" data-bs-target="#post_details_'.$post_info["id"].'">...more</span>';
                             }
+
+                    // view comments text
+                    if($no_of_comments !==0 ) {
+
+                      if ($no_of_comments === 1) {
+                        echo '
+                          <span class="view_comments d-block text-muted" data-bs-toggle="modal" data-bs-target="#post_details_'.$post_info["id"].'">View all '.$no_of_comments.' comment</span>';
+                      } else {
+                        echo '
+                          <span class="view_comments d-block text-muted" data-bs-toggle="modal" data-bs-target="#post_details_'.$post_info["id"].'">View all '.$no_of_comments.' comments</span>';
+                      }
+                      
+                    } else {
+                      echo "<br>";
+                    }
                     
-                    echo '
-                    <span class="view_comments d-block text-muted" data-bs-toggle="modal" data-bs-target="#post_details_'.$post_info["id"].'">View all '.$no_of_comments.' comments</span>
+
+                    echo'
                       <span id="time_'.$post_id.'" class="badge bg-light text-dark time" data-bs-toggle="tooltip" data-bs-placement="top" title="">';
                         echo '<script>get_time_fn("time_'.$post_info["id"].'" , "'.$post_info["created_at"].'");</script>';
                       
@@ -159,7 +233,7 @@
                   </div>
                   <div class="border-top p-2">
                     <div class="input-group">
-                      <input type="text" id="comment_input_'.$post_id.'" class="form-control" placeholder="Add a comment..." aria-label="Recipient\'s username" aria-describedby="basic-addon2">
+                      <input type="text" id="comment_input_'.$post_id.'" class="form-control" placeholder="Add a comment..." aria-label="Add a comment..." aria-describedby="basic-addon2" required>
                       <button 
                         class="btn btn-outline-secondary" 
                         type="button" 
@@ -193,7 +267,7 @@
 
                           <div class="col-lg-5 col-12 border-top p-2 position-absolute bottom-0 bg-light">
                             <div class="input-group">
-                              <input type="text" id="post_details_comment_input_'.$post_id.'" class="form-control" placeholder="Add a comment..." aria-label="Recipient\'s username" aria-describedby="basic-addon2">
+                              <input type="text" id="post_details_comment_input_'.$post_id.'" class="form-control" placeholder="Add a comment..." aria-label="Add a comment..." aria-describedby="basic-addon2" required>
                               <button 
                                 class="btn btn-outline-secondary" 
                                 type="button" 
@@ -208,7 +282,7 @@
                               <div class="profile_pic_display_name">
                                 <img class="profile_pic_post shadow-sm" src="'.$post_user_profile_pic.'" alt="Profile Photo" />
                                 <div class="location_display_name_container d-inline">
-                                &nbsp; &nbsp; <a href="./user_profile" class="display_name_header">'.$display_name.'</a>
+                                &nbsp; &nbsp; <a href="./profile.php?user_id='.$post_info['user_id'].'" class="display_name_header">'.$display_name.'</a>
                                       <span class="location">';
                                         if($post_info['location'] !== '' ){ echo $post_info['location'] ;};
                                 echo  '</span>
@@ -219,10 +293,9 @@
                                 <h3><i class="bi bi-three-dots-vertical"></i></h3>
                               </div>
                             </div>
-                          </div>  
-
-                          
-                          <div class="all_comments_caption_container"   id="all_comments_caption_container_'.$post_id.'">
+                          </div>  ';
+                         
+                          echo '<div class="all_comments_caption_container"   id="all_comments_caption_container_'.$post_id.'">
                           
                             <div class="row mb-5">
                               <div class="col-1">
@@ -230,7 +303,10 @@
                               </div>
                               <div class="col-11 ps-3">
                                 
-                                <div class="caption text-muted"><a href="./user_profile" class="fw-bold">'.$display_name.'</a>  &nbsp;'.$post_info['caption'].'</div>
+                                <div class="caption text-muted"><a href="./profile.php?user_id='.$post_info['user_id'].'" class="fw-bold">'.$display_name.'</a>  &nbsp;';
+                                echo '<script>detect_links(`'.$post_info['caption'].'`);</script>';
+                                
+                                echo'</div>
                               </div>
                             </div>
 
@@ -263,7 +339,10 @@
                                 </div>
 
                                 <div class="col-10 ps-3">  
-                                  <div class="caption comment text-muted"><a href="./user_profile" class="fw-bold">'.$comment_user_info['display_name'].'</a>  &nbsp; '.$comments_info['comment'].'</div>
+                                  <div class="comment text-muted"><a href="./profile.php?user_id='.$comment_user_id.'" class="fw-bold">'.$comment_user_info['display_name'].'</a>  &nbsp; ';
+                                  
+                                  echo '<script>detect_links("'.$comments_info['comment'].'");</script>';
+                                  echo '</div>
                                   <div class="comment_time_likes">
                                     <span style="cursor: pointer" id="comment_time_'.$comments_info["id"].'"  data-bs-toggle="tooltip" data-bs-placement="top" title="">';
                                       echo '<script>get_time_fn("comment_time_'.$comments_info["id"].'" , "'.$comments_info["created_at"].'");</script>';
@@ -298,6 +377,7 @@
                               
                             
                       echo' </div>
+                      <br><br>
 
                           </div>
 

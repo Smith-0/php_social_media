@@ -134,4 +134,9 @@ a {
 pre {
   margin-bottom: -0.6rem !important;
 }
+
+.user_argu_counts {
+  position: absolute;
+  right: 0 !important;
+}
 /*# sourceMappingURL=profile.css.map */

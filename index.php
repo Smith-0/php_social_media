@@ -28,6 +28,7 @@
 
     <!-- Main Css -->
     <link rel="stylesheet" href="./assets/css/index/index.css" />
+    <link rel="stylesheet" href="./assets/css/test/test.css" />
 
 
     <!-- Swaet Alert JS -->

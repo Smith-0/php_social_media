@@ -114,65 +114,74 @@ function savePost (post_id , current_user_id , save_post_btn_id) {
 
 // comment 
 function comment (input_field_id , post_id , display_name , profile_pic , modal_id) {
+
   let comment_value = document.getElementById(input_field_id).value;
 
-  let highest_comment_id = parseInt(document.getElementById(`highest_comment_id_input_hidden_field_${post_id}`).value) ;
+  if (comment_value === '') {
+    alert('please write something');
+  } else {
+    
 
-  $.ajax({
-    type: "POST",
-    url: "./ajax/comment.php",
-    data : { comment_value , post_id },
-    success: function (response) {
-      document.getElementById(input_field_id).value = '';
-      if (modal_id) {
-        var post_details_modal = new bootstrap.Modal(document.getElementById(modal_id), {
-          keyboard: false
-        })
-        post_details_modal.show();
+    let highest_comment_id = parseInt(document.getElementById(`highest_comment_id_input_hidden_field_${post_id}`).value) ;
+
+    $.ajax({
+      type: "POST",
+      url: "./ajax/comment.php",
+      data : { comment_value , post_id },
+      success: function (response) {
+        document.getElementById(input_field_id).value = '';
+        if (modal_id) {
+          var post_details_modal = new bootstrap.Modal(document.getElementById(modal_id), {
+            keyboard: false
+          })
+          post_details_modal.show();
+        }
+        
+          $comment_to_add = `
+            <div class="row mb-3">
+              <div class="col-1">
+                <img
+                  class="profile_pic_post_comment profile_pic_post shadow-sm float-start"
+                  src="${profile_pic}"
+                  alt="Profile Photo"
+                />
+              </div>
+            
+              <div class="col-10 ps-3">
+                <div class="caption comment text-muted">
+                  <a href="./user_profile" class="fw-bold">
+                    ${display_name}
+                  </a>
+                  &nbsp; ${comment_value}
+                </div>
+                <div class="comment_time_likes mt-1">
+                  <span>a few seconds ago</span> &nbsp; &nbsp;
+                  <span id="comment_like_count_div_${highest_comment_id+1}">
+                    0 likes
+                    <input type="hidden" value="0" id="like_comment_count_${highest_comment_id+1}">
+                  </span>
+                </div>
+              </div>
+            
+              <div class="col-1 ps-3">
+                <i class="bi bi-heart comment_like_btn" id="like_comment_btn_${highest_comment_id+1}" onclick="like_comment(${highest_comment_id+1})"></i>
+              </div>
+            </div>`;
+            document.getElementById(`highest_comment_id_input_hidden_field_${post_id}`).value = highest_comment_id+1;
+        
+
+          $(`#all_comments_container_${post_id}`).prepend($comment_to_add);
+
+          const comments_div = $(`#all_comments_caption_container_${post_id}`);
+          comments_div.animate({
+            scrollTop: 0
+          }, 500);
+        
       }
-      
-        $comment_to_add = `
-          <div class="row mb-3">
-            <div class="col-1">
-              <img
-                class="profile_pic_post_comment profile_pic_post shadow-sm float-start"
-                src="${profile_pic}"
-                alt="Profile Photo"
-              />
-            </div>
-          
-            <div class="col-10 ps-3">
-              <div class="caption comment text-muted">
-                <a href="./user_profile" class="fw-bold">
-                  ${display_name}
-                </a>
-                &nbsp; ${comment_value}
-              </div>
-              <div class="comment_time_likes mt-1">
-                <span>a few seconds ago</span> &nbsp; &nbsp;
-                <span id="comment_like_count_div_${highest_comment_id+1}">
-                  0 likes
-                  <input type="hidden" value="0" id="like_comment_count_${highest_comment_id+1}">
-                </span>
-              </div>
-            </div>
-          
-            <div class="col-1 ps-3">
-              <i class="bi bi-heart comment_like_btn" id="like_comment_btn_${highest_comment_id+1}" onclick="like_comment(${highest_comment_id+1})"></i>
-            </div>
-          </div>`;
-          document.getElementById(`highest_comment_id_input_hidden_field_${post_id}`).value = highest_comment_id+1;
-      
+    })
+  }
 
-        $(`#all_comments_container_${post_id}`).prepend($comment_to_add);
-
-        const comments_div = $(`#all_comments_caption_container_${post_id}`);
-        comments_div.animate({
-          scrollTop: 0
-        }, 500);
-      
-    }
-  })
+  
 }
 
 // like COMMENT
@@ -210,4 +219,57 @@ function like_comment (comment_id) {
       }
     }
   })
+}
+
+
+// follow / unfollow
+function followToggle (current_user_id , user_id) {
+
+  let follow_toggle_btn = document.getElementById(`follow_toggle_btn_${user_id}`);
+  let no_of_followers = parseInt(document.getElementById(`no_of_followers_${user_id}`).innerHTML);
+
+
+  $.ajax({
+    type: "POST",
+    url: './ajax/follow.php',
+    data: {current_user_id , user_id},
+    success: function (response) {
+      if (response  == 'follow') {
+        no_of_followers++;
+        follow_toggle_btn.classList.remove('btn-primary');
+        follow_toggle_btn.classList.add('btn-outline-secondary');
+        document.getElementById(`follow_toggle_btn_${user_id}`).innerHTML = "following";
+        document.getElementById(`no_of_followers_${user_id}`).innerHTML = no_of_followers;
+      } else {
+        no_of_followers--;
+        follow_toggle_btn.classList.add('btn-primary');
+        follow_toggle_btn.classList.remove('btn-outline-secondary');
+        document.getElementById(`follow_toggle_btn_${user_id}`).innerHTML = "follow";
+        document.getElementById(`no_of_followers_${user_id}`).innerHTML = no_of_followers;
+
+
+      }
+    }
+  })
+}
+
+// show peole --> likes , followers , following
+function show_people(type , user_id , post_id) {
+  document.getElementById('show_people_label').innerHTML = type;
+
+  $.ajax({
+    url: './',
+    data: {type , user_id, post_id},
+    success: function (response) {
+      console.log(response);
+    }
+  })
+
+  if(type === 'Followers') {
+    
+  } else if(type === 'Following') {
+
+  } else if(type === 'Likes') {
+
+  }
 }

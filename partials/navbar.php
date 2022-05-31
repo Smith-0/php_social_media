@@ -57,18 +57,16 @@ if (isset($_SESSION['id'])) {
 
         <div class="menu_container d-flex pt-1">
             
-          <a href="./index.php"><h3 class=""><i class="bi bi-house-door"></i></h3></a>
-          <h3 class=""><i class="bi bi-plus-circle ps-3 ps-md-4" data-bs-toggle="modal" data-bs-target="#create_post_modal"></i></h3>
-          <h3 class=""><i class="bi bi-compass ps-3 ps-md-4"></i></h3>
-          <h3 class=""><i class="bi bi-heart ps-3 ps-md-4"></i></h3>
-          <div class="dropdown profile_dropdown ps-3 ps-md-4" style="cursor: pointer;">
+          <a href="./index.php"><h3><i class="bi bi-house-door"></i></h3></a>
+          <h3><i class="bi bi-plus-circle ps-3 ps-md-4" data-bs-toggle="modal" data-bs-target="#create_post_modal"></i></h3>
+          <div class="dropdown profile_dropdown ps-3 ps-md-4 pt-1" style="cursor: pointer;">
               <span id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 <img class="profile_pic_navbar shadow-sm" id="profile_pic_navbar" src="<?php echo $current_user_profile_pic; ?>" alt="Profile Photo" />
               </span>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="./profile.php"><i class="bi bi-person-circle"></i> &nbsp; Profile</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-file-post"></i> &nbsp; Posts</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark-fill"></i> &nbsp; Saved</a></li>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="./profile.php?user_id=<?php echo $current_user_id; ?>"><i class="bi bi-person-circle"></i> &nbsp; Profile</a></li>
+                <li><a class="dropdown-item" href="./profile.php?user_id=<?php echo $current_user_id; ?>"><i class="bi bi-file-post"></i> &nbsp; Posts</a></li>
+                <li><a class="dropdown-item" href="./?saved_posts"><i class="bi bi-bookmark-fill"></i> &nbsp; Saved</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="./logout.php"><i class="bi bi-box-arrow-right"></i> &nbsp; Logout</a></li>
               </ul>
